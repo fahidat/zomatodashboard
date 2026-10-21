@@ -118,32 +118,22 @@ hr {
 # ==========================================
 # 3. AUTOMATIC CSV LOADING
 # ==========================================
-DATASET_PATH = (
-    Path(__file__).parent / "Zomato restaurant dataset.csv"
+import os
+import pandas as pd
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+dataset_path = os.path.join(
+    BASE_DIR,
+    "Zomato restaurant dataset.csv"
 )
 
-@st.cache_data
-def load_data(file_path, modified_time):
-    df = pd.read_csv(file_path)
-    df.columns = df.columns.str.strip()
-    return df
-
-if not DATASET_PATH.exists():
-    st.error(
-        "Dataset not found! Place "
-        "'Zomato restaurant dataset.csv' "
-        "in the same folder as zomato.py."
+if not os.path.exists(dataset_path):
+    raise FileNotFoundError(
+        f"Dataset not found at: {dataset_path}"
     )
-    st.stop()
 
-try:
-    data = load_data(
-        str(DATASET_PATH),
-        DATASET_PATH.stat().st_mtime
-    )
-except Exception as error:
-    st.error(f"Error loading CSV: {error}")
-    st.stop()
+df = pd.read_csv(dataset_path)
 
 # ==========================================
 # 4. CHECK REQUIRED COLUMNS
